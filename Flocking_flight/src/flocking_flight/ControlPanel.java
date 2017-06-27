@@ -4,15 +4,18 @@ package flocking_flight;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-
+import java.awt.Dimension;
 import java.awt.Graphics;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Vector2d;
@@ -25,12 +28,17 @@ import repast.simphony.userpanel.ui.UserPanelCreator;
 
 public class ControlPanel implements UserPanelCreator, ChangeListener{
 	
+	public static boolean isNoise = true;
+	public static boolean isDelay = true;
+	public static boolean isTragetMoveAutomatic = false;
 	
-	public static double R0 = 10;
-	public static double Rmin = 10;
-	public static double Rtrg = 6.5;
-	public static double Rcom = 15;
-	public static double RC = 100;
+	
+	
+	public static double R0 = 10;//控制平衡距离
+	public static double Rmin = 10;//没什么影响
+	public static double Rtrg = 6.5;//在目标附近编队飞行的半径
+	public static double Rcom = 15;//编队大小
+	//public static double RC = 100;//感知距离
 	
 	public static double D = 1;
 	public static double Cfrict = 10;
@@ -52,12 +60,22 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 	//public static double Trec = 5;
 	
 	
-	public static double Noise = 0;
+	public static double Noise = 1;
 	
 	public static Vector2d Xtrg = new Vector2d(80, 80);
 	
 	public static int Wall_x = 50;
 	public static int Wall_y = 50;
+	
+	JButton button1;
+	JButton button2;
+	JButton button3;
+	
+	JLabel labelPanel1;
+	JLabel labelPanel2;
+	JLabel labelPanel3;
+	JLabel labelPanel4;
+	
 	
 	
 	JSlider slider1;
@@ -103,6 +121,13 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 	
 	JPanel panel;
 	JPanel panelSlider;
+	JPanel panelSlider1;
+	JPanel panelSlider2;
+	JPanel panelSlider3;
+	JPanel panelSlider4;
+	JPanel panelButton1;
+	JPanel panelButton2;
+	JPanel panelButton3;
 	JPanel panelChart;
 	
 	
@@ -111,6 +136,7 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 		// TODO Auto-generated method stub
 		
 		panel = new JPanel();
+		panel.setPreferredSize(new Dimension(1000, 1000));
 		panel.setLayout(new GridLayout(1,2));
 						
 		ScalChart demo1 = new ScalChart(3000, "Scal", "");
@@ -134,7 +160,23 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 		panelChart.add(demo3);
 		
 		panelSlider = new JPanel();
-		panelSlider.setLayout(new GridLayout(18, 2));
+		panelSlider.setLayout(new GridLayout(4, 1, 10, 10));
+		
+		panelSlider1 = new JPanel();
+		panelSlider1.setLayout(new GridLayout(9, 2, 5, 5));
+		panelSlider1.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+		panelSlider2 = new JPanel();
+		panelSlider2.setLayout(new GridLayout(6, 2, 5, 5));
+		panelSlider2.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+		panelSlider3 = new JPanel();
+		panelSlider3.setLayout(new GridLayout(4, 2, 5, 5));
+		panelSlider3.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+		panelSlider4 = new JPanel();
+		panelSlider4.setLayout(new GridLayout(1, 2, 5, 5));
+		panelSlider4.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+		
+		
+		
 		
 		slider1 = new JSlider();
 		slider1.setMaximum(100);
@@ -154,6 +196,7 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 		label2 = new JLabel("(平衡半径)R0：" + R0);
 		slider2.addChangeListener(this);
 		
+		/*
 		slider3 = new JSlider();
 		slider3.setMaximum(20);
 		slider3.setMinimum(0);
@@ -162,6 +205,7 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 		slider3.setValue((int) (Rmin));
 		label3 = new JLabel("(最小半径)Rmin：" + Rmin);
 		slider3.addChangeListener(this);
+		*/
 		
 		slider4 = new JSlider();
 		slider4.setMaximum(100);
@@ -201,13 +245,14 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 		
 		slider8 = new JSlider();
 		slider8.setMaximum(10);
-		slider8.setMinimum(0);
+		slider8.setMinimum(1);
 		slider8.setPaintTicks(true);
 		slider8.setPaintLabels(true);
 		slider8.setValue((int) (Noise));
 		label8 = new JLabel("(噪音强度)Noise：" + Noise);
 		slider8.addChangeListener(this);
 		
+		/*
 		slider9 = new JSlider();
 		slider9.setMaximum(10);
 		slider9.setMinimum(0);
@@ -216,6 +261,7 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 		slider9.setValue((int) (d));
 		label9 = new JLabel("(编队飞行虚拟边界作用范围)d：" + d);
 		slider9.addChangeListener(this);
+		*/
 		
 		slider10 = new JSlider();
 		slider10.setMaximum(10);
@@ -237,7 +283,7 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 		
 		slider12 = new JSlider();
 		slider12.setMaximum(10);
-		slider12.setMinimum(0);
+		slider12.setMinimum(1);
 		slider12.setPaintTicks(true);
 		slider12.setPaintLabels(true);
 		slider12.setValue((int) (Tdel));
@@ -299,47 +345,153 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 		label18 = new JLabel("Wall_y：" + Wall_y);
 		slider18.addChangeListener(this);
 		*/
+		button1 = new JButton("噪音");
+		button2 = new JButton("传输延时");
+		button3 = new JButton("目标自动移动开");
 		
-		panelSlider.add(slider1);
-		panelSlider.add(label1);
-		panelSlider.add(slider2);
-		panelSlider.add(label2);
-		panelSlider.add(slider3);
-		panelSlider.add(label3);
-		panelSlider.add(slider4);
-		panelSlider.add(label4);
-		panelSlider.add(slider5);
-		panelSlider.add(label5);
-		panelSlider.add(slider6);
-		panelSlider.add(label6);
-		panelSlider.add(slider7);
-		panelSlider.add(label7);
-		panelSlider.add(slider8);
-		panelSlider.add(label8);
-		panelSlider.add(slider9);
-		panelSlider.add(label9);
-		panelSlider.add(slider10);
-		panelSlider.add(label10);
-		panelSlider.add(slider11);
-		panelSlider.add(label11);
-		panelSlider.add(slider12);
-		panelSlider.add(label12);
-		panelSlider.add(slider13);
-		panelSlider.add(label13);
-		panelSlider.add(slider14);
-		panelSlider.add(label14);
-		panelSlider.add(slider15);
-		panelSlider.add(label15);
-		panelSlider.add(slider16);
-		panelSlider.add(label16);
+		
+		panelSlider1.add(new JLabel("飞行控制模块"));
+		panelSlider1.add(new JLabel(""));
+		panelSlider1.add(slider1);
+		panelSlider1.add(label1);
+		panelSlider1.add(slider2);
+		panelSlider1.add(label2);
+		//panelSlider1.add(slider3);
+		//panelSlider1.add(label3);
+		panelSlider1.add(slider4);
+		panelSlider1.add(label4);
+		panelSlider1.add(slider5);
+		panelSlider1.add(label5);
+		panelSlider1.add(slider6);
+		panelSlider1.add(label6);
+		panelSlider1.add(slider7);
+		panelSlider1.add(label7);
+		//panelSlider1.add(slider9);
+		//panelSlider1.add(label9);
+		panelSlider1.add(slider10);
+		panelSlider1.add(label10);
+		panelSlider1.add(slider11);
+		panelSlider1.add(label11);
+		
+		panelSlider2.add(new JLabel("延时噪音模块"));
+		panelSlider2.add(new JLabel(""));
+		panelSlider2.add(button1);
+		panelSlider2.add(new JLabel(""));
+		panelSlider2.add(slider8);
+		panelSlider2.add(label8);
+		panelSlider2.add(button2);
+		panelSlider2.add(new JLabel(""));
+		panelSlider2.add(slider12);
+		panelSlider2.add(label12);
+		panelSlider2.add(slider13);
+		panelSlider2.add(label13);
+		
+		panelSlider3.add(new JLabel("目标追踪模块"));
+		panelSlider3.add(new JLabel(""));
+		panelSlider3.add(button3);
+		panelSlider3.add(new JLabel(""));
+		panelSlider3.add(slider15);
+		panelSlider3.add(label15);
+		panelSlider3.add(slider16);
+		panelSlider3.add(label16);
+		
 		/*
 		panelSlider.add(slider17);
 		panelSlider.add(label17);
 		panelSlider.add(slider18);
 		panelSlider.add(label18);
 		*/
+		
+		panelSlider4.add(slider14);
+		panelSlider4.add(label14);
+		
+		
+		
+		
+		panelSlider.add(panelSlider1);
+		panelSlider.add(panelSlider2);
+		panelSlider.add(panelSlider3);
+		panelSlider.add(panelSlider4);
+		
+		
 		panel.add(panelChart);
 		panel.add(panelSlider);
+		panel.setAutoscrolls(true);
+		
+		button1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				if (!isNoise) {
+					button1.setText("噪音开");
+					isNoise = true;
+					slider8.setValue((int) (Noise));
+					label8.setText("(噪音强度)Noise：" + slider8.getValue());
+					slider8.setVisible(true);
+					label8.setVisible(true);
+				}
+				else {
+					button1.setText("噪音关");
+					isNoise = false;
+					Noise = 0;
+					slider8.setVisible(false);
+					label8.setVisible(false);
+				}
+			}
+		});
+		
+		button2.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				if (!isDelay) {
+					button2.setText("传输延时开");
+					isDelay = true;
+					slider12.setValue((int) (Tdel));
+					label12.setText("(传输延时)Tdel：" + slider12.getValue());
+					slider12.setVisible(true);
+					label12.setVisible(true);
+				}
+				else {
+					button2.setText("传输延时关");
+					isDelay = false;
+					Tdel = 0;
+					slider12.setVisible(false);
+					label12.setVisible(false);
+				}
+			}
+		});
+		
+		button3.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if (isTragetMoveAutomatic) {
+					button3.setText("目标自动移动关");
+					isTragetMoveAutomatic = false;
+					slider15.setValue((int)Xtrg.x);
+					label15.setText("(目标区中心横坐标)Xtrg_x：" + slider15.getValue());
+					slider16.setValue((int)Xtrg.y);
+					label16.setText("(目标区中心横坐标)Xtrg_y：" + slider16.getValue());
+					slider15.setVisible(true);
+					label15.setVisible(true);
+					slider16.setVisible(true);
+					label16.setVisible(true);
+				}
+				else {
+					button3.setText("目标自动移动开");
+					isTragetMoveAutomatic = true;
+					slider15.setVisible(false);
+					label15.setVisible(false);
+					slider16.setVisible(false);
+					label16.setVisible(false);
+				}
+			}
+		});
+		
 		
 		return panel;
 	}
@@ -357,10 +509,11 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 			label2.setText("(平衡半径)R0：" + slider2.getValue());
 			R0 = slider2.getValue();
 		}
+		/*
 		if ((JSlider)e.getSource() == slider3) {
 			label3.setText("(最小半径)Rmin：" + slider3.getValue());
 			Rmin = slider3.getValue();
-		}
+		}*/
 		if ((JSlider)e.getSource() == slider4) {
 			label4.setText("(编队飞行半径)Rcom：" + slider4.getValue());
 			Rcom = slider4.getValue();
@@ -381,10 +534,11 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 			label8.setText("(噪音强度)Noise：" + slider8.getValue());
 			Noise = slider8.getValue();
 		}
+		/*
 		if ((JSlider)e.getSource() == slider9) {
 			label9.setText("(编队飞行虚拟边界作用范围)d：" + slider9.getValue());
 			d = slider9.getValue();
-		}
+		}*/
 		if ((JSlider)e.getSource() == slider10) {
 			label10.setText("(向目标飞行速度)V0：" + slider10.getValue());
 			V0 = slider10.getValue();
@@ -413,7 +567,7 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 			label16.setText("(目标区中心纵坐标)Xtrg_y：" + slider16.getValue());
 			Xtrg.y = slider16.getValue();
 		}
-		/*
+		
 		if ((JSlider)e.getSource() == slider17) {
 			label17.setText("Wall_x：" + slider17.getValue());
 			Wall_x = slider17.getValue();
@@ -421,7 +575,7 @@ public class ControlPanel implements UserPanelCreator, ChangeListener{
 		if ((JSlider)e.getSource() == slider18) {
 			label18.setText("Wall_y：" + slider18.getValue());
 			Wall_y = slider18.getValue();
-		}*/
+		}
 	}
 
 }

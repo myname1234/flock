@@ -163,7 +163,7 @@ public class Unit {
 	
 	
 	/**
-	 * Unit远离墙的加速度
+	 * Unit虚拟边界的加速度
 	 * @return
 	 */
 	public Vector2d AVirtualwall(){

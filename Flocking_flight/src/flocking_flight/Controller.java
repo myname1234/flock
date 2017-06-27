@@ -54,6 +54,9 @@ public class Controller {
 		
 		target = new Target(ControlPanel.Xtrg.x, ControlPanel.Xtrg.y, context, space);
 		
+		cleanData(filename1);
+		cleanData(filename2);
+		cleanData(filename3);
 		Print(Time, 0, filename1);
 		Print(Time, 0, filename2);
 		Print(Time, 0, filename3);
@@ -88,9 +91,13 @@ public class Controller {
 		
 		}
 		
-		
-		addCircleTrack(context, space);
-		//target.go(ControlPanel.Xtrg.x, ControlPanel.Xtrg.y, space);
+		if (ControlPanel.isTragetMoveAutomatic) {
+			addCircleTrack(context, space);	
+		}
+		else {
+			target.go(ControlPanel.Xtrg.x, ControlPanel.Xtrg.y, space);
+		}
+		//
 		//System.out.println(allUnits.toString());
 		
 		if (timeStep == (int)(1/ControlPanel.T)) {
@@ -104,7 +111,7 @@ public class Controller {
 		}
 	}
 	
-	
+	//目标自动移动
 	public void addCircleTrack(Context<Object> context, ContinuousSpace<Object> space) {
 		Vector2d pos = target.pos;
 		double step = ControlPanel.Vflock * ControlPanel.T;
@@ -135,6 +142,22 @@ public class Controller {
 		
 	}
 	
+	/**
+	 * 清空文件
+	 * @param path
+	 */
+	public void cleanData(String path) {
+		File file = new File(path);
+		FileWriter fw;
+		try {
+			fw = new FileWriter(file);
+			fw.write("");
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public void addWalls(Context<Object> context, ContinuousSpace<Object> space){
 		allWalls = new ArrayList<>();
